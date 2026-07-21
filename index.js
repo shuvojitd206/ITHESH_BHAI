@@ -1,79 +1,60 @@
 const TelegramBot = require('node-telegram-bot-api');
 
-const TOKEN = '8901568527:AAFEesWGaJw64xrhWHLN03kA_Ur2aGUbhz0';
-const ADMIN_ID = 851887045;
+// TEMPORARY: token hardcoded for quick testing. Isse jaldi environment variable mein move karo aur BotFather se revoke/regenerate karo.
+const token = process.env.BOT_TOKEN || 'YOUR_BOT_TOKEN_HERE';
 
-const bot = new TelegramBot(TOKEN, { polling: true });
-
-const userMap = {};
-
-bot.onText(/\/start/, (msg) => {
-  const chatId = msg.chat.id;
-
-  const welcomeMessage = `🎉 Welcome to VIP Team! 💯
-
-🔗 Registration Link:
-https://www.ts777.online/#/register?invitationCode=324515976095
-
-✅ Register karke deposit karo aur Screenshot bhej do. Screenshot verify hote hi tumhe VIP Group me add kar diya jayega. 🚀`;
-
-  bot.sendMessage(chatId, welcomeMessage);
-  bot.sendDocument(chatId, "./ITHESH VIP PANEL.apk", {
-    caption: "📲 Download App"
-  });
-  bot.sendVoice(chatId, "./audio.ogg");
-  bot.sendMessage(chatId, "✅ Deposit karke Screenshot Send karo.");
-});
-
-bot.on('chat_join_request', (req) => {
-  const chatId = req.from.id;
-
-  const joinMessage = `🎉 Welcome to VIP Team! 💯
-
-🔗 Registration Link:
-https://www.ts777.online/#/register?invitationCode=324515976095
-
-✅ Register karke deposit karo aur Screenshot bhej do. Screenshot verify hote hi tumhe VIP Group me add kar diya jayega. 🚀`;
-
-  bot.sendMessage(chatId, joinMessage);
-  bot.sendDocument(chatId, "./ITHESH VIP PANEL.apk", {
-    caption: "📲 Download App"
-  });
-  bot.sendVoice(chatId, "./audio.ogg");
-  bot.sendMessage(chatId, "✅ Deposit karke Screenshot Send karo.");
-});
-
-bot.on('message', (msg) => {
-  const chatId = msg.chat.id;
-
-  if (chatId === ADMIN_ID) {
-    if (msg.text && msg.text.startsWith('/start')) return;
-
-    if (msg.reply_to_message) {
-      const repliedId = msg.reply_to_message.message_id;
-      const targetUserId = userMap[repliedId];
-
-      if (targetUserId) {
-        bot.sendMessage(targetUserId, msg.text);
-      } else {
-        bot.sendMessage(ADMIN_ID, 'Ye message kis user ka hai pata nahi chal raha, sahi message pe reply karo.');
-      }
+const bot = new TelegramBot(token, {
+  polling: {
+    params: {
+      // Ye batana zaroori hai warna Telegram chat_join_request event bhejta hi nahi
+      allowed_updates: ['message', 'chat_join_request']
     }
-    return;
   }
-
-  if (msg.text && msg.text.startsWith('/start')) return;
-
-  const userName = msg.from.first_name || 'User';
-  const username = msg.from.username ? `@${msg.from.username}` : 'No username';
-
-  const forwardText = `📩 New message\n👤 ${userName} (${username})\n🆔 ${chatId}\n\n${msg.text}`;
-
-  bot.sendMessage(ADMIN_ID, forwardText).then((sentMsg) => {
-    userMap[sentMsg.message_id] = chatId;
-  });
 });
 
-bot.on('polling_error', (error) => {
-  console.log(error.message);
+console.log('Bot started. Waiting for channel join requests...');
+
+// Jab koi user group/channel join request bhejta hai
+bot.on('chat_join_request', async (req) => {
+  const chatId = req.chat.id;
+  const userId = req.from.id;
+  const userName = req.from.first_name || 'there';
+
+  console.log(`Join request aayi: ${userId} (${userName}) chat ${chatId} se`);
+
+  // Sirf DM bhejo, approve mat karo
+  try {
+    await bot.sendMessage(
+      userId,
+      `🎉 Welcome to VIP Team! 💯
+
+🔗 Registration Link:
+https://www.ts777.online/#/register?invitationCode=324515976095
+
+✅ Register karke deposit karo aur Screenshot bhej do. Screenshot verify hote hi tumhe VIP Group me add kar diya jayega. 🚀`
+    );
+
+    await bot.sendDocument(userId, "./ITHESH VIP PANEL.apk", {
+      caption: "📲 Download App"
+    });
+
+    await bot.sendVoice(userId, "./audio.ogg");
+
+    await bot.sendMessage(
+      userId,
+      "✅ Deposit karke Screenshot Send karo."
+    );
+
+    console.log(`DM sent to ${userId}`);
+  } catch (dmError) {
+    console.error(`DM FAILED for ${userId}: ${dmError.message}`);
+    if (dmError.response && dmError.response.body) {
+      console.error('Telegram response:', JSON.stringify(dmError.response.body));
+    }
+  }
+});
+
+// Kisi bhi tarah ki polling error ko crash hone se bachao
+bot.on('polling_error', (err) => {
+  console.error('Polling error:', err.message);
 });
