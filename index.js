@@ -1,7 +1,7 @@
 const TelegramBot = require('node-telegram-bot-api');
 
 // Token env variable se lo, ya seedha yahan daal do (sirf testing ke liye)
-const token = process.env.BOT_TOKEN || '8901568527:AAFEesWGaJw64xrhWHLN03kA_Ur2aGUbhz0';
+const token = process.env.BOT_TOKEN || '8901568527:AAFOwGzoAafL-QWNemAU1SpFcGWo3npX_l4';
 
 if (!token || token === 'YOUR BOT TOKEN') {
   console.error('BOT_TOKEN set nahi hai. Env variable set karo ya upar wali line mein token daalo.');
@@ -117,7 +117,7 @@ let isShuttingDown = false;
 
 async function shutdown(signal) {
   if (isShuttingDown) return;
-  isSITHESH gDown = true;
+  isShuttingDown = true;
   console.log(`${signal} mila, bot ko gracefully band kar rahe hain...`);
   try {
     await bot.stopPolling();
