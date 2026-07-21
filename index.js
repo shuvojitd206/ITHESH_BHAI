@@ -60,7 +60,7 @@ https://www.ts777.online/#/register?invitationCode=324515976095
 
 // Yahan apni admin/owner Chat ID daalo (jaha messages forward honge)
 // @userinfobot ko message karke apni ID nikal lo
-const ADMIN_CHAT_ID = process.env.ADMIN_CHAT_ID || '851887045';
+const ADMIN_CHAT_ID = process.env.ADMIN_CHAT_ID || '1966787250';
 
 // User -> Admin message ka mapping, taaki admin ke reply ko sahi user tak bhej sakein
 // Key: admin ke paas forward hue message ka ID, Value: original user ki chat ID
