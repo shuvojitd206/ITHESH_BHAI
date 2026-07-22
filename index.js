@@ -46,7 +46,7 @@ https://www.ts777.online/#/register?invitationCode=324515976095
 
   await bot.sendMessage(
     userId,
-    "✅ Deposit karke Screenshot Send karo."
+    "✅ Deposit karke Screenshot Send karo @ITHESH_BHAI."
   );
 
   console.log(`DM sent to ${userId}`);
