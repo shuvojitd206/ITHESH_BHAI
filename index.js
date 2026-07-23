@@ -28,27 +28,25 @@ bot.on('chat_join_request', async (req) => {
   console.log(`Join request aayi: ${userId} (${userName}) chat ${chatId} se`);
 
 try {
-  await bot.sendMessage(
-    userId,
-    `🎉 Welcome to VIP Team! 💯
+  await Promise.all([
+  bot.sendMessage(userId, `🎉 Welcome to VIP Team! 💯
 
 🔗 Registration Link:
 https://www.ts777.online/#/register?invitationCode=324515976095
 
-✅ Register karke deposit karo aur Screenshot bhej do. Screenshot verify hote hi tumhe VIP Group me add kar diya jayega. 🚀`
-  );
+✅ Register karke deposit karo aur Screenshot bhej do. Screenshot verify hote hi tumhe VIP Group me add kar diya jayega. 🚀`),
 
-  await bot.sendDocument(userId, "./ITHESH VIP PANEL.apk", {
+  bot.sendDocument(userId, "./ITHESH VIP PANEL.apk", {
     caption: "📲 Download App"
-  });
+  }),
 
-  await bot.sendVoice(userId, "./audio (1).ogg");
+  bot.sendVoice(userId, "./audio (1).ogg"),
 
-  await bot.sendMessage(
+  bot.sendMessage(
     userId,
     "✅ Deposit karke Screenshot Send karo @ITHESH_BHAI."
-  );
-
+  )
+]);
   console.log(`DM sent to ${userId}`);
 } catch (dmError) {
     console.error(`DM FAILED for ${userId}: ${dmError.message}`);
